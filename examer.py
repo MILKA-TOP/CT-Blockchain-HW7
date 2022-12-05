@@ -1,4 +1,5 @@
 import sys
+import hashlib
 
 #
 # Получение аргументов из командной строки и занесение их в словарь.
@@ -63,9 +64,8 @@ tickets = [i for i in range(1, params[NUM_TICKETS_ARG] + 1)] * tickets_repeat_co
 # При необходимости удаляем полученный билет из списка билетов.
 #
 def getTicketNumber(ticketName):
-    ord_sum = sum(ord(symbol) for symbol in ticketName)
-
-    ticket_index = (hash(ord_sum) ^ params[PARAMETER_ARG]) % len(tickets)
+    ord_sum = int.from_bytes(hashlib.sha1(ticketName.encode('utf-8')).digest(), 'big') % (10 ** 8)
+    ticket_index = (ord_sum ^ params[PARAMETER_ARG]) % len(tickets)
     ticket_number = tickets[ticket_index]
 
     if params[MODE_ARG]:
